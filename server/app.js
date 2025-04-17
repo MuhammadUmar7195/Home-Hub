@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./Config/connect");
+const status = require("express-status-monitor");
 require("dotenv").config();
+
+//third-party middleware
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(status());
 
 //environment variables
 const port = process.env.PORT;
@@ -22,7 +28,14 @@ const start = async () => {
 start();
 
 
+//user routes
+const userRoute = require("./Routes/user.routes");
+const authRoute = require("./Routes/auth.route");
+app.use("/api/user", userRoute);
+app.use("/api/auth", authRoute);
+
 //test route
 app.get("/", (req, res) => {
+    // res.json({success: true, msg: "Hello Server"})
     res.send(`<center>Server is running on ${port}</center>`);
 });
