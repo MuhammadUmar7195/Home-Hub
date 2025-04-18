@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInFailure,
+  signInSuccess,
+} from "../store/Slices/user.slice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({}); //initialize with empty object
-  const [error, setError] = useState(null); //initialize with null
-  const [loading, setLoading] = useState(false); //initialize with bool false
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -17,7 +23,7 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      dispatch(signInStart());
       const { data } = await axios.post("/api/auth/signin", formData, {
         headers: {
           "Content-Type": "application/json",
@@ -25,19 +31,13 @@ const SignIn = () => {
       });
       // console.log("Signup response:", data);
       if (data?.success === false) {
-        setLoading(false);
-        setError(data.message);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      setLoading(false);
-      console.log("Caught error:", error);
-      setError(
-        error.response?.data?.message || error.message || "Signup failed"
-      );
+      dispatch(signInFailure(error.message));
     }
   };
   return (
