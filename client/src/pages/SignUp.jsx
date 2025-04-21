@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({}); //initialize with empty object
@@ -69,10 +70,11 @@ const SignUp = () => {
         />
         <button
           disabled={loading}
-          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80"
+          className="bg-slate-700 cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80"
         >
           {loading ? `Loading...` : `Sign up`}
         </button>
+        <OAuth />
       </form>
 
       {error && <p className="text-red-500 mt-4">{error}</p>}

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "../components/OAuth";
+import axios from "axios";
 import {
   signInStart,
   signInFailure,
@@ -58,9 +59,10 @@ const SignIn = () => {
           id="password"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80">
+        <button className="bg-slate-700 cursor-pointer text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80">
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <OAuth />
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       <div className="flex gap-2 pt-5">
