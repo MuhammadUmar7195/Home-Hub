@@ -41,8 +41,10 @@ start();
 //user routes
 const userRoute = require("./Routes/user.routes");
 const authRoute = require("./Routes/auth.route");
+const listingRoute = require("./Routes/listing.route");
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/listing", listingRoute);
 
 //middlware
 app.use((err, req, res, next) => {
