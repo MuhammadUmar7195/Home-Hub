@@ -5,6 +5,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../store/Slices/user.slice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -21,7 +24,7 @@ const Profile = () => {
     email: currentUser?.rest?.email || "",
     avatar: currentUser?.rest?.avatar || "",
   });
-  console.log(formData); //static state use to deal dynamic state
+  // console.log(formData); //static state use to deal dynamic state
 
   const fileRef = useRef(null);
   const dispatch = useDispatch();
@@ -111,6 +114,29 @@ const Profile = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteUserStart());
+
+      const { data } = await axios.delete(
+        `/api/user/delete/${currentUser?.rest?._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (data?.success === false) {
+        dispatch(deleteUserFailure(data.message));
+      }
+      dispatch(deleteUserSuccess(data));
+      alert("User Deleted Successfully.");
+    } catch (error) {
+      console.log("handle delete user", error);
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -190,7 +216,9 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
