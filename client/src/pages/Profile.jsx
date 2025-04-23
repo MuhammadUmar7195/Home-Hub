@@ -14,6 +14,7 @@ import {
 } from "../store/Slices/user.slice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state?.user);
@@ -149,7 +150,7 @@ const Profile = () => {
         },
       });
 
-      if(data?.success === false){
+      if (data?.success === false) {
         dispatch(signoutFailure(data.message));
         return;
       }
@@ -209,7 +210,7 @@ const Profile = () => {
           type="text"
           placeholder="Username"
           id="username"
-          className="border p-3 rounded-lg"
+          className="bg-white border p-3 rounded-lg"
           defaultValue={currentUser?.rest?.username}
           onChange={handleChange}
         />
@@ -217,7 +218,7 @@ const Profile = () => {
           type="email"
           placeholder="Email"
           id="email"
-          className="border p-3 rounded-lg"
+          className="bg-white border p-3 rounded-lg"
           defaultValue={currentUser?.rest?.email}
           onChange={handleChange}
         />
@@ -225,7 +226,7 @@ const Profile = () => {
           type="password"
           placeholder="Password"
           id="password"
-          className="border p-3 rounded-lg"
+          className="bg-white border p-3 rounded-lg"
         />
 
         <button
@@ -234,9 +235,12 @@ const Profile = () => {
         >
           {loading ? "loading..." : "Update"}
         </button>
-        <button className="bg-green-500 cursor-pointer text-slate-50 p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80">
+        <Link
+          className="bg-green-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={`/create-listing`}
+        >
           Create Listing
-        </button>
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
