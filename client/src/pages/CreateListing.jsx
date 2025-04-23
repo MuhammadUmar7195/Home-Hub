@@ -2,9 +2,12 @@ import { useState } from "react";
 import supabase from "../supabase";
 import { useSelector } from "react-redux";
 import { MdDeleteOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CreateListing = () => {
   const { currentUser } = useSelector((state) => state?.user);
+  const navigate = useNavigate();
 
   const [files, setFiles] = useState([]);
   const [imageUploadError, setImageUploadError] = useState(false);
@@ -25,8 +28,6 @@ const CreateListing = () => {
     parking: false,
     furnished: false,
   });
-
-  console.log(formData);
 
   const handleImageSubmit = () => {
     if (!currentUser?.rest?._id) {
@@ -123,16 +124,49 @@ const CreateListing = () => {
   const handleRemove = (index) => {
     setFormData({
       ...formData,
-      imageUrls: formData?.imageUrls.filter((_, i) => i !== index)
-    })
+      imageUrls: formData?.imageUrls.filter((_, i) => i !== index),
+    });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData?.imageUrls.length < 1) {
+      return setError("You must upload at least one image");
+    }
+    try {
+      const userId = currentUser?.rest?._id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      const { data } = await axios.post(
+        "/api/listing/create",
+        { ...formData, userRef: userId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (data?.success === false) {
+        setError(data.message);
+      } else if (data?.success === true) {
+        alert("all done");
+      }
+      
+      navigate(`/listing/${data?.body?._id}`);
+    } catch (error) {
+      console.log("Handle Submit error: ", error);
+      setLoading(false);
+    }
+  };
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
         Create a Listing
       </h1>
-      <form className="flex flex-col sm:flex-row gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         <div className="flex flex-col gap-4 flex-1">
           <input
             type="text"
@@ -329,10 +363,11 @@ const CreateListing = () => {
           <button
             type="submit"
             disabled={loading || uploading}
-            className="p-4 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+            className="p-4 bg-slate-700 cursor-pointer text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           >
             {loading ? "Creating..." : "Create listing"}
           </button>
+          {error && <p className="text-red-500 ">{error}</p>}
         </div>
       </form>
     </main>
