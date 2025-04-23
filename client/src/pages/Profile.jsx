@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { createClient } from "@supabase/supabase-js";
+import supabase from "../supabase";
 import {
   updateUserStart,
   updateUserSuccess,
@@ -28,14 +28,10 @@ const Profile = () => {
     email: currentUser?.rest?.email || "",
     avatar: currentUser?.rest?.avatar || "",
   });
-  // console.log(formData); //static state use to deal dynamic state
 
   const fileRef = useRef(null);
   const dispatch = useDispatch();
 
-  const supabaseUrl = "https://vjwbscpnejglevqvkkhq.supabase.co";
-  const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
-  const supabase = createClient(supabaseUrl, supabaseKey); //connection success to supabase
 
   useEffect(() => {
     if (file) {
