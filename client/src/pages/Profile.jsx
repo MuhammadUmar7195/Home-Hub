@@ -15,10 +15,12 @@ import {
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { MdDeleteOutline, MdEdit } from "react-icons/md";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state?.user);
 
+  //for profile state
   const [file, setFile] = useState(null);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -28,10 +30,13 @@ const Profile = () => {
     email: currentUser?.rest?.email || "",
     avatar: currentUser?.rest?.avatar || "",
   });
+  //for listing state
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListing, setUserListing] = useState([]);
+  console.log(userListing.body);
 
   const fileRef = useRef(null);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     if (file) {
@@ -157,100 +162,177 @@ const Profile = () => {
     }
   };
 
+  const handleShowListing = async () => {
+    try {
+      setShowListingsError(false);
+      const { data } = await axios.get(
+        `/api/user/listing/${currentUser?.rest?._id}`
+      );
+
+      if (data?.success === false) {
+        setShowListingsError(true);
+        return;
+      }
+      setUserListing(data);
+    } catch (error) {
+      console.log("handle show listing:", error);
+      setShowListingsError(true);
+    }
+  };
+
+  const handleListDelete = async () => {
+    
+  }
   return (
-    <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 border-none">
-        <input
-          type="file"
-          ref={fileRef}
-          hidden
-          accept="image/*"
-          onChange={(e) => e.target.files && setFile(e.target.files[0])}
-        />
-        <img
-          onClick={() => fileRef.current?.click()}
-          className="rounded-full h-28 w-28 object-cover cursor-pointer self-center mt-2"
-          src={
-            formData?.avatar ||
-            currentUser?.rest?.avatar ||
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          }
-          alt="profile"
-          onError={handleImageError}
-        />
-        <div>
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                className="bg-green-500 h-2.5 rounded-full"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
-          )}
+    <>
+      {/* Profile section */}
+      <div className="p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 border-none"
+        >
+          <input
+            type="file"
+            ref={fileRef}
+            hidden
+            accept="image/*"
+            onChange={(e) => e.target.files && setFile(e.target.files[0])}
+          />
+          <img
+            onClick={() => fileRef.current?.click()}
+            className="rounded-full h-28 w-28 object-cover cursor-pointer self-center mt-2"
+            src={
+              formData?.avatar ||
+              currentUser?.rest?.avatar ||
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            }
+            alt="profile"
+            onError={handleImageError}
+          />
+          <div>
+            {uploadProgress > 0 && uploadProgress < 100 && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  className="bg-green-500 h-2.5 rounded-full"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            )}
 
-          {fileUploadError && (
-            <p className="text-red-700 text-center">
-              Error uploading image. Please try again.
-            </p>
-          )}
+            {fileUploadError && (
+              <p className="text-red-700 text-center">
+                Error uploading image. Please try again.
+              </p>
+            )}
 
-          {uploadProgress === 100 && (
-            <p className="text-green-500 text-center">
-              Image uploaded successfully!
-            </p>
-          )}
+            {uploadProgress === 100 && (
+              <p className="text-green-500 text-center">
+                Image uploaded successfully!
+              </p>
+            )}
+          </div>
+
+          <input
+            type="text"
+            placeholder="Username"
+            id="username"
+            className="bg-white border p-3 rounded-lg"
+            defaultValue={currentUser?.rest?.username}
+            onChange={handleChange}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            id="email"
+            className="bg-white border p-3 rounded-lg"
+            defaultValue={currentUser?.rest?.email}
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            className="bg-white border p-3 rounded-lg"
+          />
+
+          <button
+            disabled={loading}
+            className="bg-slate-700 text-white p-3 cursor-pointer rounded-lg uppercase hover:opacity-90"
+          >
+            {loading ? "loading..." : "Update"}
+          </button>
+          <Link
+            className="bg-green-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            to={`/create-listing`}
+          >
+            Create Listing
+          </Link>
+        </form>
+        <div className="flex justify-between mt-5">
+          <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+            Delete account
+          </span>
+          <span onClick={handleSignout} className="text-red-700 cursor-pointer">
+            Sign out
+          </span>
         </div>
-
-        <input
-          type="text"
-          placeholder="Username"
-          id="username"
-          className="bg-white border p-3 rounded-lg"
-          defaultValue={currentUser?.rest?.username}
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          id="email"
-          className="bg-white border p-3 rounded-lg"
-          defaultValue={currentUser?.rest?.email}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          id="password"
-          className="bg-white border p-3 rounded-lg"
-        />
-
-        <button
-          disabled={loading}
-          className="bg-slate-700 text-white p-3 cursor-pointer rounded-lg uppercase hover:opacity-90"
-        >
-          {loading ? "loading..." : "Update"}
-        </button>
-        <Link
-          className="bg-green-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
-          to={`/create-listing`}
-        >
-          Create Listing
-        </Link>
-      </form>
-      <div className="flex justify-between mt-5">
-        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
-          Delete account
-        </span>
-        <span onClick={handleSignout} className="text-red-700 cursor-pointer">
-          Sign out
-        </span>
+        <p className="text-red-700 mt-5">{error ? error : ""}</p>
+        <p className="text-green-500 mt-5">
+          {updateSuccess ? "User update successfully" : ""}
+        </p>
       </div>
-      <p className="text-red-700 mt-5">{error ? error : ""}</p>
-      <p className="text-green-500 mt-5">
-        {updateSuccess ? "User update successfully" : ""}
-      </p>
-    </div>
+      {/* Show Listing of users section */}
+      <div className="p-1 max-w-lg mx-auto">
+        <button
+          onClick={handleShowListing}
+          className="text-green-500 w-full cursor-pointer"
+        >
+          Show Listing
+        </button>
+        {showListingsError && (
+          <p className="text-red-700 text-center">{showListingsError}</p>
+        )}
+        {userListing?.body && userListing?.body.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <h1 className="text-center mt-7 text-3xl font-semibold mb-3">
+              Your Listing
+            </h1>
+            {/* {userListing?.body?.length} */}
+            {userListing?.body.map((listing) => (
+              <div
+                key={listing._id}
+                className="border-white rounded-lg p-3 flex justify-between items-center gap-4 bg-white"
+              >
+                <Link to={`/listing/${listing._id}`}>
+                  <img
+                    src={listing.imageUrls[0]}
+                    alt="listing image"
+                    className="h-16 w-16 object-contain rounded-lg"
+                  />
+                </Link>
+                <Link
+                  className="text-slate-950 font-semibold hover:opacity-70 truncate flex-1 "
+                  to={`/listing/${listing._id}`}
+                >
+                  <p>{listing.name}</p>
+                </Link>
+                <div className="flex flex-col item center gap-4">
+                  <button onClick={() => handleListDelete(listing?._id) } className="cursor-pointer">
+                    <MdDeleteOutline size={22} className=" fill-red-500" />
+                  </button>
+                  <Link to={`/listing/${listing._id}`}>
+                    <button className="cursor-pointer">
+                      <MdEdit size={22} className="fill-green-500" />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
