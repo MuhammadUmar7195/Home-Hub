@@ -1,5 +1,6 @@
 const argon = require("argon2");
 const User = require("../Model/user.model");
+const ListingModel = require("../Model/listing.model");
 const errorHandler = require("../Utils/error");
 
 const test = async (req, res) => {
@@ -51,13 +52,24 @@ const deleteUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-} 
+}
 
-
-
+const getUserListing = async (req, res, next) => {
+    if (req.user.id === req.params.id) { // we use userRef as params to extract all listing of perticular user
+        try {
+            const listings = await ListingModel.find({ userRef: req.params.id.toString() });
+            res.status(200).json({ success: true, body: listings });
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        return next(errorHandler(401, 'You can only get your own account!'));
+    }
+}
 
 module.exports = {
     test,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserListing
 }
