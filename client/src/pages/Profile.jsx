@@ -33,7 +33,6 @@ const Profile = () => {
   //for listing state
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListing, setUserListing] = useState([]);
-  console.log(userListing.body);
 
   const fileRef = useRef(null);
   const dispatch = useDispatch();
@@ -180,9 +179,24 @@ const Profile = () => {
     }
   };
 
-  const handleListDelete = async () => {
-    
-  }
+  const handleListDelete = async (listingId) => {
+    try {
+      const { data } = await axios.delete(`/api/listing/delete/${listingId}`);
+      if (data?.success === false) {
+        console.log(data?.message);
+        return;
+      }
+
+      setUserListing((prev) => {
+        // Ensure we're working with an array
+        const currentListings = Array.isArray(prev) ? prev : [];
+        return currentListings.filter((listing) => listing._id !== listingId);
+      });
+
+    } catch (error) {
+      console.log("Handle List delete error: ", error?.message);
+    }
+  };
   return (
     <>
       {/* Profile section */}
@@ -318,7 +332,10 @@ const Profile = () => {
                   <p>{listing.name}</p>
                 </Link>
                 <div className="flex flex-col item center gap-4">
-                  <button onClick={() => handleListDelete(listing?._id) } className="cursor-pointer">
+                  <button
+                    onClick={() => handleListDelete(listing?._id)}
+                    className="cursor-pointer"
+                  >
                     <MdDeleteOutline size={22} className=" fill-red-500" />
                   </button>
                   <Link to={`/listing/${listing._id}`}>
