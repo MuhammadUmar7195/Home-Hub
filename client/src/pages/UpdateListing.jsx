@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import supabase from "../supabase";
 import { useSelector } from "react-redux";
 import { MdDeleteOutline } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const CreateListing = () => {
+const UpdateListing = () => {
   const { currentUser } = useSelector((state) => state?.user);
   const navigate = useNavigate();
+  const params = useParams();
 
   const [files, setFiles] = useState([]);
   const [imageUploadError, setImageUploadError] = useState(false);
@@ -28,6 +29,37 @@ const CreateListing = () => {
     parking: false,
     furnished: false,
   });
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listingId = params.listingId;
+      const { data } = await axios.get(`/api/listing/get/${listingId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (data?.success == false) {
+        console.log(data?.message);
+        return;
+      }
+      setFormData({
+        imageUrls: data?.body?.imageUrls || [],
+        name: data.body?.name || "",
+        description: data.body?.description || "",
+        address: data.body?.address || "",
+        type: data?.body?.type || "rent",
+        bedrooms: data?.body?.bedrooms || 1,
+        bathrooms: data?.body?.bathrooms || 1,
+        regularPrice: data?.body?.regularPrice || 50,
+        discountPrice: data?.body?.discountPrice || 0,
+        offer: data?.body?.offer || false,
+        parking: data?.body?.parking || false,
+        furnished: data?.body?.furnished || false,
+      });
+    };
+
+    fetchListing();
+  }, [params.listingId]);
 
   const handleImageSubmit = () => {
     if (!currentUser?.rest?._id) {
@@ -139,8 +171,8 @@ const CreateListing = () => {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      const { data } = await axios.post(
-        "/api/listing/create",
+      const { data } = await axios.put(
+        `/api/listing/update/${params.listingId}`,
         { ...formData, userRef: userId },
         {
           headers: {
@@ -154,7 +186,7 @@ const CreateListing = () => {
       } else if (data?.success === true) {
         alert("all done");
       }
-      
+
       navigate(`/listing/${data?.body?._id}`);
     } catch (error) {
       console.log("Handle Submit error: ", error);
@@ -164,7 +196,7 @@ const CreateListing = () => {
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
-        Create a Listing
+        Update a Listing
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         <div className="flex flex-col gap-4 flex-1">
@@ -356,7 +388,7 @@ const CreateListing = () => {
                   className="p-3 rounded-lg uppercase hover:opacity-75"
                   onClick={() => handleRemove(index)}
                 >
-                  <MdDeleteOutline size={24} className="fill-red-500"/>
+                  <MdDeleteOutline size={24} className="fill-red-500" />
                 </button>
               </div>
             ))}
@@ -365,7 +397,7 @@ const CreateListing = () => {
             disabled={loading || uploading}
             className="p-4 bg-slate-700 cursor-pointer text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           >
-            {loading ? "Creating..." : "Create listing"}
+            {loading ? "Creating..." : "Update listing"}
           </button>
           {error && <p className="text-red-500 ">{error}</p>}
         </div>
@@ -374,4 +406,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default UpdateListing;

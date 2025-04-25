@@ -338,7 +338,7 @@ const Profile = () => {
                   >
                     <MdDeleteOutline size={22} className=" fill-red-500" />
                   </button>
-                  <Link to={`/listing/${listing._id}`}>
+                  <Link to={`/update-listing/${listing._id}`}>
                     <button className="cursor-pointer">
                       <MdEdit size={22} className="fill-green-500" />
                     </button>
