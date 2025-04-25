@@ -32,6 +32,7 @@ const Listing = () => {
   useEffect(() => {
     const fetchListing = async () => {
       try {
+        setLoading(true);
         const listingId = params.listingId;
         const { data } = await axios.get(`/api/listing/get/${listingId}`, {
           headers: {
@@ -39,9 +40,10 @@ const Listing = () => {
           },
         });
         if (data?.success == false) {
-          console.log(data?.message);
+          setError(true);
+          setLoading(false);
           return;
-        }
+        }   
 
         setListing({
           imageUrls: data?.body?.imageUrls || [],
@@ -57,6 +59,8 @@ const Listing = () => {
           parking: data?.body?.parking || false,
           furnished: data?.body?.furnished || false,
           userRef: data?.body?.userRef || "",
+          updated: data?.body?.updatedAt || null,
+          id: data?.body?._id || null
         });
         setLoading(false);
         setError(false);
@@ -73,7 +77,7 @@ const Listing = () => {
   return (
     <main>
       {loading && (
-        <p className="text-center my-7 text-2xl">
+        <p className="flex items-center justify-center min-h-screen">
           <PulseLoader size={20} color="#a0ada3" />
         </p>
       )}
@@ -123,7 +127,17 @@ const Listing = () => {
                 : listing?.regularPrice?.toLocaleString("en-US") ?? ""}
               {listing?.type === "rent" && " / month"}
             </p>
-            <p className="flex items-center mt-6 gap-2 text-slate-600  text-sm">
+            <span className="font-semibold">
+              Created at:{" "}
+              {listing?.updated
+                ? new Date(listing.updated).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "N/A"}
+            </span>
+            <p className="flex items-center mt-1 gap-2 text-slate-600  text-sm">
               <FaMapMarkerAlt className="text-green-700" />
               {listing?.address}
             </p>
@@ -163,7 +177,17 @@ const Listing = () => {
                 {listing?.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
-           
+            {currentUser &&
+              listing?.userRef !== currentUser?._id &&
+              !contact && (
+                <button
+                  onClick={() => setContact(true)}
+                  className="bg-slate-600 text-white rounded-lg uppercase hover:opacity-95 p-3"
+                >
+                  Contact Owner{" "}
+                </button>
+              )}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
