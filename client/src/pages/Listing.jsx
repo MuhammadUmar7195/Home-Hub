@@ -182,7 +182,7 @@ const Listing = () => {
               !contact && (
                 <button
                   onClick={() => setContact(true)}
-                  className="bg-slate-600 text-white rounded-lg uppercase hover:opacity-95 p-3"
+                  className="bg-slate-600 text-white cursor-pointer rounded-lg uppercase hover:opacity-95 p-3"
                 >
                   Contact Owner{" "}
                 </button>
