@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { PulseLoader } from "react-spinners";
+import ListingItem from "../components/listingItems";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -58,13 +60,13 @@ const SearchPage = () => {
         },
       });
 
-      console.log(data);
+      console.log(data?.body);
       if (data.length > 8) {
         setShowMore(true);
       } else {
         setShowMore(false);
       }
-      setListing(data);
+      setListing(data?.body);
       setLoading(false);
     };
 
@@ -117,10 +119,12 @@ const SearchPage = () => {
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
+
+  const onShowMoreClick = () => {}
   return (
     <div className="flex flex-col md:flex-row">
       {/* left section */}
-      <div className="p-7  border-b-2 md:border-r-2 md:min-h-screen">
+      <div className="p-7 border-b-2 border-slate-200 md:border-r-2 md:min-h-screen">
         <form className="flex flex-col gap-8 " onSubmit={handleSubmit}>
           <div className="flex items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
@@ -223,9 +227,34 @@ const SearchPage = () => {
 
       {/* right section */}
       <div className="flex-1">
-        <h1 className="text-3xl font-semibold border-b-none p-3 text-slate-700 mt-5">
+        <h1 className="text-3xl font-semibold border-b-2 border-slate-200 p-3 text-slate-700 mt-5">
           Listing Results
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listing.length === 0 && (
+            <p className="text-xl text-slate-700">No listing found</p>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              <PulseLoader size={20} color="#a0ada3" />{" "}
+            </p>
+          )}
+
+          {!loading &&
+            listing &&
+            listing.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
+            ))}
+
+          {showMore && (
+            <button
+              onClick={onShowMoreClick}
+              className="text-green-700 hover:underline p-7 text-center w-full"
+            >
+              Show more
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
