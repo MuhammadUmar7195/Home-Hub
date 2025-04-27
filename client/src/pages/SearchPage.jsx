@@ -60,7 +60,6 @@ const SearchPage = () => {
         },
       });
 
-      console.log(data?.body);
       if (data.length > 8) {
         setShowMore(true);
       } else {
@@ -137,6 +136,7 @@ const SearchPage = () => {
     }
     setListing({ ...listing, ...data });
   };
+  
   return (
     <div className="flex flex-col md:flex-row">
       {/* left section */}
