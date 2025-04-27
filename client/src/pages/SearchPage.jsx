@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { PulseLoader } from "react-spinners";
 import ListingItem from "../components/listingItems";
+import axios from "axios";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -120,7 +120,23 @@ const SearchPage = () => {
     navigate(`/search?${searchQuery}`);
   };
 
-  const onShowMoreClick = () => {}
+  const onShowMoreClick = async () => {
+    const numberofListing = listing.length;
+    const startIndex = numberofListing;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+
+    const { data } = await axios.get(`/api/listing/get?${searchQuery}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (data.length < 9) {
+      setShowMore(false);
+    }
+    setListing({ ...listing, ...data });
+  };
   return (
     <div className="flex flex-col md:flex-row">
       {/* left section */}
@@ -249,7 +265,7 @@ const SearchPage = () => {
           {showMore && (
             <button
               onClick={onShowMoreClick}
-              className="text-green-700 hover:underline p-7 text-center w-full"
+              className="text-green-700 hover:underline p-7 text-center w-full cursor-pointer"
             >
               Show more
             </button>
