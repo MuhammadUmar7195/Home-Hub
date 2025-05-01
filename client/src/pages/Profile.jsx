@@ -29,6 +29,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     username: currentUser?.rest?.username || "",
     email: currentUser?.rest?.email || "",
+    password: currentUser?.rest?.password || "",
     avatar: currentUser?.rest?.avatar || "",
   });
   //for listing state
@@ -111,7 +112,12 @@ const Profile = () => {
         return;
       }
       dispatch(updateUserSuccess(data));
-      alert("Profile updated successfully!");
+      toast.success("Change updated successfully");
+      setTimeout(() => {
+        toast.loading("Please singin again to see changes", {
+          duration: 6000,
+        });
+      }, 3000);
       setUpdateSuccess(true);
     } catch (error) {
       console.log("handle submit error: ", error);
@@ -272,6 +278,7 @@ const Profile = () => {
             type="password"
             placeholder="Password"
             id="password"
+            onChange={handleChange}
             className="bg-white border p-3 rounded-lg"
           />
 
