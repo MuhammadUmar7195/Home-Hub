@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { MdDeleteOutline, MdEdit } from "react-icons/md";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state?.user);
@@ -114,6 +115,7 @@ const Profile = () => {
       setUpdateSuccess(true);
     } catch (error) {
       console.log("handle submit error: ", error);
+      toast.error("Something went wrong");
       dispatch(updateUserFailure(error.message));
     }
   };
@@ -134,9 +136,10 @@ const Profile = () => {
         dispatch(deleteUserFailure(data.message));
       }
       dispatch(deleteUserSuccess(data));
-      alert("User Deleted Successfully.");
+      toast.success("User Deleted Successfully.");
     } catch (error) {
       console.log("handle delete user", error);
+      toast.error("Something went wrong");
       dispatch(deleteUserFailure(error.message));
     }
   };
@@ -153,10 +156,13 @@ const Profile = () => {
       if (data?.success === false) {
         dispatch(signoutFailure(data.message));
         return;
+      } else {
+        toast.success("User signout successfully");
       }
       dispatch(signoutSuccess(data));
     } catch (error) {
       console.log("Handle signout error: ", error);
+      toast.error("Something went wrong");
       dispatch(signoutFailure(error.message));
     }
   };
@@ -192,7 +198,6 @@ const Profile = () => {
         const currentListings = Array.isArray(prev) ? prev : [];
         return currentListings.filter((listing) => listing._id !== listingId);
       });
-
     } catch (error) {
       console.log("Handle List delete error: ", error?.message);
     }

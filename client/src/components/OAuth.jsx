@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { signInSuccess } from "../store/Slices/user.slice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const OAuth = () => {
   const dispatch = useDispatch();
@@ -34,11 +35,12 @@ const OAuth = () => {
         ...response?.data,
         photo: response?.data?.photo || result?.user?.photoURL,
       };
-      
+
       dispatch(signInSuccess(userData));
       navigate("/");
     } catch (error) {
       console.log("Could not sign in with google", error);
+      toast.error("Something went wrong");
     }
   };
 

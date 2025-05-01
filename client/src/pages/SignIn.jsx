@@ -8,6 +8,7 @@ import {
   signInFailure,
   signInSuccess,
 } from "../store/Slices/user.slice";
+import toast from "react-hot-toast";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({}); //initialize with empty object
@@ -35,9 +36,11 @@ const SignIn = () => {
         dispatch(signInFailure(data.message));
         return;
       }
+      toast.success("Signin successfully");
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
+      toast.error("Something went wrong");
       dispatch(signInFailure(error.message));
     }
   };

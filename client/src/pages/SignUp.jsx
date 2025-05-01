@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OAuth from "../components/OAuth";
+import { toast } from "react-hot-toast";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({}); //initialize with empty object
@@ -31,12 +32,14 @@ const SignUp = () => {
         setError(data.message);
         return;
       }
+      toast.success("Register successfully")
       setLoading(false);
       setError(null);
       navigate("/signin");
     } catch (error) {
       setLoading(false);
       console.log("Caught error:", error);
+      toast.error("Something went wrong");
       setError(
         error.response?.data?.message || error.message || "Signup failed"
       );

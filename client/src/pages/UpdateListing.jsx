@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { MdDeleteOutline } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const UpdateListing = () => {
   const { currentUser } = useSelector((state) => state?.user);
@@ -184,12 +185,13 @@ const UpdateListing = () => {
       if (data?.success === false) {
         setError(data.message);
       } else if (data?.success === true) {
-        alert("all done");
+        toast.success("Updated List successfully");
       }
 
       navigate(`/listing/${data?.body?._id}`);
     } catch (error) {
       console.log("Handle Submit error: ", error);
+      toast.error("Something went wrong");
       setLoading(false);
     }
   };

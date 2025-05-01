@@ -78,7 +78,7 @@ const SearchPage = () => {
       e.target.id === "rent" ||
       e.target.id === "sale"
     ) {
-      setSidebarData({ ...sidebarData, type: e.target.value });
+      setSidebarData({ ...sidebarData, type: e.target.id });
     }
 
     if (e.target.id === "searchTerm") {

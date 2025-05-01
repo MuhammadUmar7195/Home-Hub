@@ -5,6 +5,7 @@ const status = require("express-status-monitor");
 const cookieParser = require("cookie-parser")
 require("dotenv").config();
 const cors = require("cors");
+const path = require("path");
 
 //third-party middleware
 app.use(express.json());

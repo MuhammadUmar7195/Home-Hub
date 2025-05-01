@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { MdDeleteOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const CreateListing = () => {
   const { currentUser } = useSelector((state) => state?.user);
@@ -152,7 +153,7 @@ const CreateListing = () => {
       if (data?.success === false) {
         setError(data.message);
       } else if (data?.success === true) {
-        alert("all done");
+        toast.success("List created successfully")
       }
       
       navigate(`/listing/${data?.body?._id}`);
