@@ -12,8 +12,23 @@ import Listing from "./pages/Listing";
 import SearchPage from "./pages/SearchPage";
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
+import PreLoad from "./components/Preloader";
+
+import { useEffect, useState } from "react";
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 4000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) return <PreLoad/>;
+
   return (
     <>
       <BrowserRouter>
