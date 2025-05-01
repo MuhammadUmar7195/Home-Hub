@@ -16,7 +16,7 @@ app.use(status());
 //add cors for accessing ports
 app.use(cors({
     origin: "http://localhost:3000",
-    methods: ["POST", "GET"],
+    methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true
 }));
 
