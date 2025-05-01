@@ -13,6 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(status());
 
+app.use(express.static(path.join(__dirname, "dist")));
+
 //add cors for accessing ports
 app.use(cors({
     origin: "http://localhost:3000",
