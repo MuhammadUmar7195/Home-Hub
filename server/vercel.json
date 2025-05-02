@@ -16,13 +16,20 @@
       "dest": "app.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
+      "src": "/static/(.*)",
+      "dest": "/dist/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/dist/favicon.ico"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/dist/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/index.html",
-      "status": 200
+      "dest": "/dist/index.html"
     }
   ]
 }
