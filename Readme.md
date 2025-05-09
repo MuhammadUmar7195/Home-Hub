@@ -25,14 +25,14 @@ This is a full-stack real estate web application where users can **list properti
 
 ### 1. Clone the Repository
 ```bash
-git clone your_project_url
-
+git clone https://github.com/MuhammadUmar7195/Home-Hub
+```
 # 2. Setup Frontend
 ```bash
 cd client
 npm install
 npm run dev
-
+```
 # 3. Setup Backend
 Before starting the backend:
 
@@ -43,19 +43,19 @@ Then:
 cd server
 npm install
 npm start
-
+```
 # 4. Environment Variables
 For Frontend: 
 ```ini
-PORT=your_port
-DB_URL=your_mongodb_cluster_url
-JWT_SECRET=your_jwt_secret_key
-
+PORT = your_port
+DB_URL = your_mongodb_cluster_url
+JWT_SECRET = your_jwt_secret_key
+```
 For backend: 
 ```ini
 VITE_FIREBASE_API_KEY = YOUR_FIREBASE_API
 VITE_SUPABASE_API_KEY = YOUR_SUPABASE_API
+```
 
-🤝 Contribution
-Contributions are welcome and appreciated! Feel free to fork the repo, make your changes, and create a pull request.
+Thank you!
 
